@@ -1,24 +1,30 @@
 package org.twopiradrian.crypto;
 
-// Cifra y descifra con XOR: es reversible porque (M ^ K) ^ K = M.
-public class SymmetricCipher {
+public class SymmetricCipher implements CipherStrategy {
 
-    // Cifra un mensaje en bytes usando la clave simétrica compartida.
-    public static byte[] encrypt(byte[] plaintext, byte[] key) {
-        return applyXor(plaintext, key);
-    }
+    private final byte[] key;
 
-    // Descifra un mensaje en bytes usando la clave simétrica compartida.
-    public static byte[] decrypt(byte[] ciphertext, byte[] key) {
-        return applyXor(ciphertext, key);
-    }
-
-    // Estrategia de cifrado y descifrado.
-    private static byte[] applyXor(byte[] input, byte[] key) {
+    public SymmetricCipher(byte[] key) {
         if (key == null || key.length == 0) {
             throw new IllegalArgumentException("Symmetric key cannot be empty.");
         }
+        this.key = key.clone();
+    }
 
+    // Cifra un mensaje en bytes usando la clave simétrica compartida.
+    @Override
+    public byte[] encrypt(byte[] plaintext) {
+        return applyXor(plaintext);
+    }
+
+    // Descifra un mensaje en bytes usando la clave simétrica compartida.
+    @Override
+    public byte[] decrypt(byte[] ciphertext) {
+        return applyXor(ciphertext);
+    }
+
+    // Estrategia de cifrado y descifrado.
+    private byte[] applyXor(byte[] input) {
         // Array de bytes para almacenar el resultado.
         byte[] result = new byte[input.length];
 

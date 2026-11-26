@@ -2,7 +2,7 @@ package org.twopiradrian.system;
 
 import org.twopiradrian.channel.NetworkNode;
 import org.twopiradrian.channel.TransmissionChannel;
-import org.twopiradrian.crypto.SymmetricCipher;
+import org.twopiradrian.crypto.CipherStrategy;
 import org.twopiradrian.util.ByteFormat;
 
 import java.nio.charset.StandardCharsets;
@@ -10,11 +10,11 @@ import java.nio.charset.StandardCharsets;
 public class Node implements NetworkNode {
 
     private final String name;
-    private byte[] sharedSymmetricKey;
+    private CipherStrategy cipherStrategy;
 
-    public Node(String name, byte[] sharedSymmetricKey) {
+    public Node(String name, CipherStrategy cipherStrategy) {
         this.name = name;
-        this.sharedSymmetricKey = sharedSymmetricKey.clone();
+        this.cipherStrategy = cipherStrategy;
     }
 
     @Override
@@ -22,16 +22,15 @@ public class Node implements NetworkNode {
         return name;
     }
 
-    public void setSharedSymmetricKey(byte[] sharedSymmetricKey) {
-        this.sharedSymmetricKey = sharedSymmetricKey.clone();
+    public void setCipherStrategy(CipherStrategy cipherStrategy) {
+        this.cipherStrategy = cipherStrategy;
     }
 
-    public void sendSymmetricMessage(String message, NetworkNode receiver, TransmissionChannel channel) {
-
+    public void sendMessage(String message, NetworkNode receiver, TransmissionChannel channel) {
         // Convertimos el texto a binario.
         byte[] plaintextBytes = message.getBytes(StandardCharsets.UTF_8);
-        // Ciframos el binario.
-        byte[] ciphertextBytes = SymmetricCipher.encrypt(plaintextBytes, sharedSymmetricKey);
+        // Ciframos usando la estrategia configurada (simétrica o asimétrica).
+        byte[] ciphertextBytes = cipherStrategy.encrypt(plaintextBytes);
 
         // Logs de interpretación.
         System.out.println("[" + name + " -> SENDING]");
@@ -47,9 +46,8 @@ public class Node implements NetworkNode {
 
     @Override
     public void receive(String from, byte[] payload) {
-
-        // Desciframos el binario.
-        byte[] decryptedBytes = SymmetricCipher.decrypt(payload, sharedSymmetricKey);
+        // Desciframos usando la estrategia configurada.
+        byte[] decryptedBytes = cipherStrategy.decrypt(payload);
         // Convertimos el binario a texto.
         String recoveredMessage = new String(decryptedBytes, StandardCharsets.UTF_8);
 
