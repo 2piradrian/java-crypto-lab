@@ -1,9 +1,5 @@
 package org.twopiradrian.util;
 
-/**
- * Utilidades sin dependencias externas para visualizar bytes en consola
- * (hexadecimal, texto seguro y binario) y entender qué viaja por el canal.
- */
 public final class ByteFormat {
 
     private static final char[] HEX_DIGITS = "0123456789ABCDEF".toCharArray();
@@ -11,9 +7,7 @@ public final class ByteFormat {
     private ByteFormat() {
     }
 
-    /**
-     * Convierte un arreglo de bytes a pares hexadecimales separados por espacio.
-     */
+    // Convierte un arreglo de bytes a pares hexadecimales separados por espacio.
     public static String toHex(byte[] data) {
         if (data == null || data.length == 0) {
             return "<empty>";
@@ -30,10 +24,7 @@ public final class ByteFormat {
         return sb.toString();
     }
 
-    /**
-     * Convierte bytes a texto imprimible; los bytes fuera del rango ASCII visible
-     * se muestran como '.' para no romper la salida de consola.
-     */
+    // Convierte bytes a ASCII visible; los no imprimibles se muestran como '.' para no romper la consola.
     public static String toPrintableAscii(byte[] data) {
         if (data == null || data.length == 0) {
             return "<empty>";
@@ -50,9 +41,7 @@ public final class ByteFormat {
         return sb.toString();
     }
 
-    /**
-     * Muestra la representación binaria de 8 bits de un byte.
-     */
+    // Devuelve los 8 bits de un byte en formato binario.
     public static String toBinary(byte b) {
         StringBuilder sb = new StringBuilder(8);
         for (int bit = 7; bit >= 0; bit--) {
